@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e # exit on an error
+GO_TEST="go test -race -cover -run Test"
+do_info_jsonl(){
+    echo '{"API":"v0"}'
+}
+enum_pkgs(){
+    # rafttest has been disabled by default (https://github.com/coreos/etcd/pull/5707)
+    go list -f '{{if len .TestGoFiles}}{{.ImportPath}}{{end}}' ./... | grep -v rafttest
+}
+do_enum_jsonl(){
+    enum_pkgs | sed -e "s/\(.*\)/{\"Command\": \"$GO_TEST \1\"}/g"
+}
+do_exec_all(){
+    pkgs=$(enum_pkgs)
+    export GOPATH=$GOPATH/src/github.com/coreos/etcd/gopath
+    set -x
+    $GO_TEST $pkgs
+    set +x
+}
+do_exec(){
+    export GOPATH=$GOPATH/src/github.com/coreos/etcd/gopath
+    $@
+}
+case "$1" in
+    "info-jsonl" ) do_info_jsonl;;
+    "enum-jsonl" ) do_enum_jsonl;;
+    "exec" ) shift; do_exec "$@";;
+    "_exec_all" ) do_exec_all;; # _exec_all is not an API call. It is a toy for humans (e.g. benchmark)
+    * ) echo "Usage: $(basename $0) info-jsonl | enum-jsonl | exec [COMMAND] | _exec_all" >&2 ; exit 1;;
+esac
