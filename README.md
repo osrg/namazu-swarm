@@ -98,7 +98,7 @@ Examples:
 
  - [X] Text
  - [ ] curses (WIP)
- - [ ] static HTML
+ - [ ] Static HTML
 
 **Report**:
 
