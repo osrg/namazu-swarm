@@ -11,6 +11,7 @@ LOG = nmzswarm.LOG.getChild(__name__)
 class DockerDriver(Driver):
     """Docker driver
     """
+
     def __init__(self) -> None:
         self.cli = Client()
 
@@ -29,8 +30,8 @@ class DockerDriver(Driver):
 
     def spawn_container(self, image: str, privileged: bool) -> str:
         host_config = self.cli.create_host_config(privileged=privileged)
-        container = self.cli.create_container(image=image,
-                                              host_config=host_config)
+        container = self.cli.create_container(
+            image=image, host_config=host_config)
         self.cli.start(container)
         return container['Id']
 

@@ -8,6 +8,7 @@ from nmzswarm.util import parse_jsonl
 
 class Driver(ABC):
     """Abstract driver class"""
+
     def info(self, container: str) -> Dict[str, Any]:
         """Executes info-jsonl defined in NamazuSwarmfile"""
         jsons = self._exec_jsonl(container, '/NamazuSwarmfile info-jsonl')
@@ -19,8 +20,8 @@ class Driver(ABC):
         """Executes enum-jsonl defined in NamazuSwarmfile"""
         return self._exec_jsonl(container, '/NamazuSwarmfile enum-jsonl')
 
-    def exek(self, container: str,
-             command: str) -> Generator[bytes, None, None]:
+    def exek(self, container: str, command:
+             str) -> Generator[bytes, None, None]:
         """Executes exec defined in NamazuSwarmfile.
         If the command exits with a non-zero status,
         an ExecutionError will be raised."""
@@ -72,8 +73,9 @@ class Driver(ABC):
 class ExecutionError(Exception):
     """Raised from Driver.exek.
     """
+
     def __init__(self, command, code, *args, **kwargs):
-        super().__init__('code %d while executing %s' % (code, command),
-                         args, kwargs)
+        super().__init__('code %d while executing %s' % (code, command), args,
+                         kwargs)
         self.command = command
         self.code = code

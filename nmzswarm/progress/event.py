@@ -6,6 +6,7 @@ from typing import Any
 class Event:
     """Generic event
     """
+
     def __init__(self, worker_id: int) -> None:
         self.worker_id = worker_id
 
@@ -13,9 +14,9 @@ class Event:
 class ContainerEvent(Event):
     """container
     """
-    def __init__(self, worker_id: int,
-                 container: Any,
-                 finished: bool=False) -> None:
+
+    def __init__(self, worker_id: int, container: Any, finished:
+                 bool=False) -> None:
         super().__init__(worker_id)
         self.container = container
         self.finished = finished
@@ -24,7 +25,9 @@ class ContainerEvent(Event):
 class ContainerCreationEvent(ContainerEvent):
     """container creation
     """
-    def __init__(self, worker_id: int,
+
+    def __init__(self,
+                 worker_id: int,
                  container: Any=None,
                  finished: bool=False) -> None:
         super().__init__(worker_id, container, finished)
@@ -40,9 +43,9 @@ class ContainerCreationEvent(ContainerEvent):
 class ContainerRemovalEvent(ContainerEvent):
     """container removal
     """
-    def __init__(self, worker_id: int,
-                 container: Any,
-                 finished: bool=False) -> None:
+
+    def __init__(self, worker_id: int, container: Any, finished:
+                 bool=False) -> None:
         super().__init__(worker_id, container, finished)
 
     def __str__(self) -> str:
@@ -54,6 +57,7 @@ class ContainerRemovalEvent(ContainerEvent):
 class JobEvent(Event):
     """Job progress information
     """
+
     def __init__(self,
                  worker_id: int,
                  command: str,
@@ -77,6 +81,7 @@ class JobEvent(Event):
 class WorkerCompletionEvent(Event):
     """worker completion
     """
+
     def __init__(self, worker_id: int) -> None:
         super().__init__(worker_id)
 

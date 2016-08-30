@@ -2,8 +2,10 @@
 set -x
 set -e
 
+# requires mypy-lang (`pip3 install mypy-lang`)
 mypy --silent-imports  -p nmzswarm
 
+# requires pylint (`pip3 install pylint`)
 # C0103: invalid-name
 # I0011: locally-disabled
 # R0903: too-few-public-methods

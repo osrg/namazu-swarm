@@ -22,10 +22,9 @@ def _log_event(ev: Event) -> None:
 class SimpleProgressUI(ProgressUI):
     """Simple UI
     """
-    def run(self,
-            workers: int,
-            queue: Queue,
-            headers: Dict[str, Any]) -> Summarizer:
+
+    def run(self, workers: int, queue: Queue, headers:
+            Dict[str, Any]) -> Summarizer:
         _log_headers(headers)
         summarizer = Summarizer()
         completed = 0

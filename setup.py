@@ -8,10 +8,10 @@ if sys.version_info < (3, 2):
                        'typing module is not available')
 
 with open('./requirements.txt') as txt:
-        requirements = [line for line in txt]
+    requirements = [line for line in txt]
 
 with open('./test-requirements.txt') as txt:
-        test_requirements = [line for line in txt]
+    test_requirements = [line for line in txt]
 
 setup(
     name='nmzswarm',
@@ -34,5 +34,4 @@ setup(
         'Topic :: System :: Clustering'
         'Topic :: Software Development :: Testing',
         'Operating System :: POSIX :: Linux',
-    ],
-)
+    ], )

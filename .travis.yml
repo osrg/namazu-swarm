@@ -13,7 +13,7 @@ install:
 
 script:
 # lint
-  - ./.hack.lint.sh
+  - ./.misc/hack.lint.sh
 # unit test
   - nosetests
 # integration test
