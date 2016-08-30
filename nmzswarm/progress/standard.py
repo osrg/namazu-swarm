@@ -14,11 +14,12 @@ from nmzswarm.progress.summarizer import Summarizer
 
 def clear_screen() -> None:
     """clear the screen"""
-    print("\033[H""\033[J")
+    print("\033[H" "\033[J")
 
 
 class TablePrinter:
     """print the table"""
+
     def __init__(self) -> None:
         self.status = {}  # type: Dict[int, str]
         self.current_job = {}  # type: Dict[int, int]
@@ -77,6 +78,7 @@ class ExitMainLoop(Exception):
 class StandardProgressUI(ProgressUI):
     """Standard UI
     """
+
     def __init__(self) -> None:
         self.headers = {}  # type: Dict[str,Any]
         self.workers = 0
@@ -84,10 +86,8 @@ class StandardProgressUI(ProgressUI):
         self.printer = TablePrinter()
         self.summarizer = Summarizer()
 
-    def run(self,
-            workers: int,
-            queue: Queue,
-            headers: Dict[str, Any]) -> Summarizer:
+    def run(self, workers: int, queue: Queue, headers:
+            Dict[str, Any]) -> Summarizer:
         self.workers = workers
         self.headers = headers
         while True:

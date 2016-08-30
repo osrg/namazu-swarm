@@ -98,7 +98,7 @@ Examples:
 
  - [X] Text
  - [ ] curses (WIP)
- - [ ] static HTML
+ - [ ] Static HTML
 
 **Report**:
 
@@ -118,7 +118,8 @@ Please feel free to send your pull requests on github!
     $ cd namazu-swarm
     $ git checkout -b your-branch
     $ your-editor foo.py
-    $ ./.hack.lint.sh
+    $ ./misc/hack.format.sh
+    $ ./misc/hack.lint.sh
     $ git commit -a -s
 
 

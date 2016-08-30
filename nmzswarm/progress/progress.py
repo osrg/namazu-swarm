@@ -9,9 +9,10 @@ from nmzswarm.progress.summarizer import Summarizer
 class ProgressUI(ABC):
     """Abstract user interface class
     """
+
     @abstractmethod
-    def run(self, workers: int, queue: Queue,
-            headers: Dict[str, Any]) -> Summarizer:
+    def run(self, workers: int, queue: Queue, headers:
+            Dict[str, Any]) -> Summarizer:
         """run the UI loop
         """
         pass

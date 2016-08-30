@@ -8,7 +8,7 @@ FROM alpine
 ADD NamazuSwarmfile /
 RUN chmod +x /NamazuSwarmfile
 
-CMD "hack for keep the container running" && tail -f /dev/null
+CMD "hack for keeping the container running" && tail -f /dev/null
 ```
 
 `NamazuSwarmfile` must support the argument convention described in this section.
@@ -50,7 +50,7 @@ Example:
 
 ## `/NamazuSwarmfile exec COMMAND`
 Executes the command line, which would be included in the list retuned by `/NamazuSwarmfile enum-jsonl`.
-`/NamazuSwarmfile exec` can be called multiple times if `unreusable` is `false`.
+`/NamazuSwarmfile exec` can be called multiple times.
 
 **Stdout**: Arbitrary bytes.
 

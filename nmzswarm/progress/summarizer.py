@@ -5,6 +5,7 @@ from nmzswarm.progress.event import Event, JobEvent
 
 class Summarizer:
     """summarize the result"""
+
     def __init__(self) -> None:
         self.completed = 0
         self.failed = 0

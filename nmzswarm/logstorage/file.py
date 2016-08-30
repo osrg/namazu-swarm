@@ -15,6 +15,7 @@ def _quote(path: str) -> str:
 class FileLogStorage(LogStorage):
     """Filesystem-based implementation
     """
+
     def __init__(self, path: str) -> None:
         self.path = path
 
@@ -25,6 +26,7 @@ class FileLogStorage(LogStorage):
 class FileLogDirectory(LogDirectory):
     """Filesystem-based implementation
     """
+
     def __init__(self, path: str, test_name: str) -> None:
         self.path = path
         self.test_name = test_name

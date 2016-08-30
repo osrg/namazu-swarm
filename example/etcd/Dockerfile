@@ -15,4 +15,4 @@ RUN ./build && cp -r bin gopath
 ADD NamazuSwarmfile /
 RUN chmod +x /NamazuSwarmfile
 
-CMD echo "hack for keep the container running" && tail -f /dev/null
+CMD echo "hack for keeping the container running" && tail -f /dev/null
