@@ -1,31 +1,69 @@
-#!/bin/sh
+#!/bin/bash
 set -e # exit on an error
-GO_TEST="go test -race -cover -run Test"
+ATOZ=$(perl -e 'foreach(A..Z){print "$_ "}')
+export PATH=$(pwd)/bin:$PATH
 do_info_jsonl(){
     echo '{"API":"v0"}'
 }
-enum_pkgs(){
-    # rafttest has been disabled by default (https://github.com/coreos/etcd/pull/5707)
-    go list -f '{{if len .TestGoFiles}}{{.ImportPath}}{{end}}' ./... | grep -v rafttest
+test_pkg(){
+    # TODO: support other flags
+    pkg=$1
+    regexp=Test
+    [ x$2 != x ] && regexp=$2
+    testbin=/testbin/$pkg/$(basename $pkg).test
+    (cd $GOPATH/src/$pkg && $testbin -test.short -test.run $regexp)
+}
+command_jsonl(){
+    echo "{\"Command\": \"$@\"}"
 }
 do_enum_jsonl(){
-    enum_pkgs | sed -e "s/\(.*\)/{\"Command\": \"$GO_TEST \1\"}/g"
-}
-do_exec_all(){
-    pkgs=$(enum_pkgs)
-    export GOPATH=$GOPATH/src/github.com/coreos/etcd/gopath
-    set -x
-    $GO_TEST $pkgs
-    set +x
+    for pkg in $(cat /pkgs.txt | grep -v integration | grep -v e2e); do
+	command_jsonl $pkg
+    done
+    pkg=github.com/coreos/etcd/e2e
+
+    command_jsonl $pkg TestV2
+    command_jsonl $pkg TestV3
+    command_jsonl $pkg TestCtlV3WatchClient
+    command_jsonl $pkg TestCtlV3WatchInteractiveClient    
+    for f in $ATOZ; do
+	command_jsonl $pkg TestCtlV2$f
+	[ $f != W ] && command_jsonl $pkg TestCtlV3$f
+	[ $f != C ] && [ $f != V ] && command_jsonl $pkg Test$f
+    done
+
+    pkg=github.com/coreos/etcd/integration
+    command_jsonl $pkg TestV2
+    for f in $ATOZ; do
+	command_jsonl $pkg TestV3$f
+	[ $f != V ] && command_jsonl $pkg Test$f
+    done    
 }
 do_exec(){
-    export GOPATH=$GOPATH/src/github.com/coreos/etcd/gopath
-    $@
+    test_pkg $@
+}
+do_exec_all(){
+    # compile packages and execute at once.
+    # go itself does some parallelization automatically.
+    # https://groups.google.com/forum/#!topic/golang-nuts/oAOM7_JB4_8
+    # so it is faster than exec_all_seq.
+    cp -r bin gopath/
+    GOPATH=$(pwd)/gopath \
+	  go test -race -cover -short -run Test $(cat /pkgs.txt)
+}
+do_exec_all_seq(){
+    # execute precompiled tests sequentially. (SLOW!)
+    for pkg in $(cat /pkgs.txt); do
+	set +e; set-x
+	time do_exec $pkg
+	set +x; set -e
+    done
 }
 case "$1" in
     "info-jsonl" ) do_info_jsonl;;
     "enum-jsonl" ) do_enum_jsonl;;
     "exec" ) shift; do_exec "$@";;
     "_exec_all" ) do_exec_all;; # _exec_all is not an API call. It is a toy for humans (e.g. benchmark)
+    "_exec_all_seq" ) do_exec_all_seq;; # ditto
     * ) echo "Usage: $(basename $0) info-jsonl | enum-jsonl | exec [COMMAND] | _exec_all" >&2 ; exit 1;;
 esac
