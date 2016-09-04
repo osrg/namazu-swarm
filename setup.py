@@ -15,7 +15,7 @@ with open('./test-requirements.txt') as txt:
 
 setup(
     name='nmzswarm',
-    version='0.0.1',
+    version='0.0.2-dev',
     packages=find_packages(),
     scripts=['bin/nmzswarm'],
     install_requires=requirements,
