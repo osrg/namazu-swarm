@@ -26,6 +26,17 @@ Compared to dist_test, Namazu Swarm is made simple: it utilizes the Docker image
 Namazu Swarm is also similar to Square's [XCKnife](https://github.com/square/xcknife).
 While XCKnife is designed solely for XCTest, Namazu Swarm is applicable to any testing framework.
 
+## Experimental Result
+
+Software|Testing Method|#Node|#CPU per Node|RAM per Node|Time|Additional Info
+---|---|---|---|---|---|---
+etcd|Standalone|1|4|15GB|4 min|[#3](https://github.com/osrg/namazu-swarm/pull/3)
+etcd|**Namazu Swarm (k8s)**|**5**|4|15GB|**1 min**|[#3](https://github.com/osrg/namazu-swarm/pull/3)
+ZooKeeper|Standalone|1|4|15GB|60 min|[#6](https://github.com/osrg/namazu-swarm/pull/6)
+ZooKeeper|**Namazu Swarm (k8s)**|**5**|4|15GB|**10 min**|[#6](https://github.com/osrg/namazu-swarm/pull/6)
+
+Note that the first iteration can take a few extra minutes due to pushing the Docker image to the registry.
+
 ## Quick Start
 ### Installation
 
