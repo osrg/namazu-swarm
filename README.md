@@ -76,6 +76,7 @@ Please refer to [docs/NamazuSwarmfile.md](docs/NamazuSwarmfile.md).
 Examples:
 
  - [etcd](example/etcd)
+ - [Apache ZooKeeper](example/zookeeper)
 
 ## Implemented and planned features
 

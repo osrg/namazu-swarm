@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e # exit on an error
+do_info_jsonl(){
+    echo '{"API":"v0"}'
+}
+do_enum_jsonl(){
+    cat /commands.jsonl
+}
+do_exec(){
+    ant -Dtest.output=true -Dtestcase=$1 test-core-java
+}
+do_exec_all(){
+    ant -Dtest.output=true test-core-java
+}
+case "$1" in
+    "info-jsonl" ) do_info_jsonl;;
+    "enum-jsonl" ) do_enum_jsonl;;
+    "exec" ) shift; do_exec "$@";;
+    "_exec_all" ) do_exec_all;; # _exec_all is not an API call. It is a toy for humans (e.g. benchmark)
+    * ) echo "Usage: $(basename $0) info-jsonl | enum-jsonl | exec [COMMAND] | _exec_all" >&2 ; exit 1;;
+esac
