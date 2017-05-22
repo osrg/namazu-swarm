@@ -1,0 +1,10 @@
+sleep 1
+echo hello
+sleep 2
+echo hello2
+sleep 3
+df
+sleep 4
+uname -a
+sleep 5
+echo hello3

@@ -1,20 +1,10 @@
+dist: trusty
 sudo: required
 
-language: python
-
-python:
-  - "3.5"
-
-services:
-  - docker
-
-install:
-  - pip install -r requirements.txt && pip install -r test-requirements.txt && pip install .
+language: go
 
 script:
-# lint
-  - ./.misc/hack.lint.sh
-# unit test
-  - nosetests
-# integration test
-  - docker build -t dummy-nmzswarm ./example/dummy && ./bin/nmzswarm run --ui simple --parallel 10 --logs /tmp/logs dummy-nmzswarm
+# we need Docker 1.13 or later
+  - curl -fsSL https://get.docker.com/ | sh
+  - docker swarm init
+  - ./hack/travis.sh
