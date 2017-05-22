@@ -20,11 +20,105 @@ Twitter: [@NamazuFuzzTest](https://twitter.com/NamazuFuzzTest)
 - Reproduction of flaky test by repeating the test many times simultaneously
 - `git bisect`
 
-Namazu Swarm is heavily inspired by Cloudera's [dist_test](https://github.com/cloudera/dist_test), which has been [used](http://dist-test.cloudera.org:8080/) in Apache Kudu's community.
-Compared to dist_test, Namazu Swarm is made simple: it utilizes the Docker image format for isolating jobs.
+Many code were copy-pasted from [our contribution to accelerate CI of Docker/Moby x20 faster (on 10 nodes)](https://github.com/docker/docker/tree/v17.05.0-ce/hack/integration-cli-on-swarm).
 
-Namazu Swarm is also similar to Square's [XCKnife](https://github.com/square/xcknife).
-While XCKnife is designed solely for XCTest, Namazu Swarm is applicable to any testing framework.
+## Talks
+
+- [OSS/ContainerCon Japan (May 31-June 2, 2017, Tokyo)](http://sched.co/AOmo)
+
+## Quick Start
+### Installation
+
+    $ ./make.bash
+    $ cp ./bin/* /usr/local/bin/
+
+### Execute on Docker Swarm (single-host)
+
+Initialize the Swarm cluster:
+
+    $ docker swarm init
+
+Build the example image:
+
+    $ docker build -t dummy ./example/dummy
+
+Execute in 10 concurrent containers:
+
+    $ nmzswarm -source dummy -replicas 10
+
+
+### Execute on Docker Swarm (multi-host)
+
+Set `-push` and `target` explicitly, so that `nmzswarm` can push the image to the shared registry.
+
+    $ nmzswarm -source dummy -replicas 10 -target your-docker-registry.example.com/foo/bar:baz
+
+## Spec
+
+Please refer to [`example/dummy`](./example/dummy) for an example.
+
+A Docker/OCI image used for Namazu Swarm is supported to have the following image labels:
+
+- `net.osrg.namazu-swarm.v0.master.script`: shell command that writes the line-separated list of workload identifiers to the stdout.
+- `net.osrg.namazu-swarm.v0.worker.script`: shell command that executes the workload of which identifiers are passed via the stdin.
+
+
+e.g.
+```dockerfile
+FROM busybox
+# tests.txt contains line-separated list of raw shell commands
+ADD tests.txt /
+LABEL net.osrg.namazu-swarm.v0.master.script="cat /tests.txt" \
+      net.osrg.namazu-swarm.v0.worker.script="sh -e -x"
+````
+
+Workload identifiers can be raw shell command strings, but not generally intended to be so.
+
+## Implemented and planned features
+
+**Orchestrator**:
+
+ - [ ] Kubernetes (was default in [v0.0.1](https://github.com/osrg/namazu-swarm/tree/v0.0.1), removed atm)
+ - [X] Docker Swarm-mode (Docker 1.13 or later)
+
+**CI**:
+
+ - [X] Any! (that supports storing credentials for accessing the orchestrator. Example: [TravisCI](https://docs.travis-ci.com/user/encryption-keys/))
+
+**Target program**:
+
+ - [X] Any!
+
+**Job progress UI**:
+
+ - [X] Text
+ - [ ] curses
+ - [ ] Static HTML
+
+**Report**:
+
+ - [X] stdio
+ - [ ] Static HTML
+
+**Scheduling**
+
+ - [X] Chunking & shuffling techniques presented at [the OSS/ContainerCon talk](http://sched.co/AOmo)
+ - [ ] Makespan optimization using the past job execution history on a DB
+
+
+## How to Contribute
+We welcome your contribution to Namazu Swarm.
+Please feel free to send your pull requests on github!
+
+
+## Copyright
+Copyright (C) 2017 [Nippon Telegraph and Telephone Corporation](http://www.ntt.co.jp/index_e.html).
+
+Released under [Apache License 2.0](LICENSE.txt).
+
+- - -
+
+## Information about the previous release [v0.0.1](https://github.com/osrg/namazu-swarm/tree/v0.0.1) (based on Kubernetes)
 
 ## Experimental Result
 
@@ -37,105 +131,4 @@ ZooKeeper|**Namazu Swarm (k8s)**|**5**|4|15GB|**10 min**|[#6](https://github.com
 
 Note that the first iteration can take a few extra minutes due to pushing the Docker image to the registry.
 
-## Quick Start
-### Installation
-
-You need Python 3.5 or later to run Namazu Swarm.
-
-    $ python3 setup.py install
-
-The PyPI package will be available soon.
-
-Older Python versions (3.2, 3.3, and 3.4) and [Pyinstaller](http://www.pyinstaller.org/) binary can be supported upon request.
-
-### Parallelizing on a non-distributed Docker host
-
-    $ docker build -t etcd-nmzswarm ./example/etcd
-    $ nmzswarm run --parallel 10 --logs /tmp/logs etcd-nmzswarm
-
-### Parallelizing on a [Google Container Engine](https://cloud.google.com/container-engine/) (Kubernetes)
-
-Build the Docker image:
-
-    $ docker build -t etcd-nmzswarm ./example/etcd
-
-Push the docker image to Google Container Registry:
-
-    $ docker tag etcd-nmzswarm gcr.io/<PROJECT_ID>/etcd-nmzswarm:foobar && \
-	  gcloud docker push gcr.io/<PROJECT_ID>/etcd-nmzswarm:foobar
-
-Load the Google Container Engine credential:
-
-    $ gcloud container clusters get-credentials <CLUSTER> \
-      --zone <ZONE> --project <PROJECT_ID>
-
-Make sure `kubectl` works:
-
-    $ kubectl get nodes
-
-Run the jobs:
-
-    $ nmzswarm --driver=k8s run --parallel 10 --logs /tmp/logs gcr.io/<PROJECT_ID>/etcd-nmzswarm:foobar
-
 ![docs/img/screenshot-k8s.png](docs/img/screenshot-k8s.png)
-
-## NamazuSwarmfile
-
-Namazu Swarm requires a special script named `NamazuSwarmfile` with in the root directory of the container image.
-Please refer to [docs/NamazuSwarmfile.md](docs/NamazuSwarmfile.md).
-
-Examples:
-
- - [etcd](example/etcd)
- - [Apache ZooKeeper](example/zookeeper)
-
-## Implemented and planned features
-
-**Orchestrator**:
-
- - [X] Non-distributed plain Docker (default)
- - [X] Kubernetes (experimental)
- - [X] "Old" Docker Swarm (it should work but not tested)
- - [ ] "New" Docker Swarm
-
-**CI**:
-
- - [X] Any! (that supports storing credentials for accessing the orchestrator. Example: [TravisCI](https://docs.travis-ci.com/user/encryption-keys/))
-
-**Target program**:
-
- - [X] Any! (you just need to supply a simple [`NamazuSwarmfile`](docs/NamazuSwarmfile.md) script)
-
-**Job progress UI**:
-
- - [X] Text
- - [ ] curses (WIP)
- - [ ] Static HTML
-
-**Report**:
-
- - [ ] Static HTML
-
-**Scheduling**
-
- - [ ] [Makespan](https://en.wikipedia.org/wiki/Makespan) optimization using statically estimated cost values
- - [ ] Makespan optimization using the past job execution history on a DB, such as Google Cloud SQL or Amazon RDS (DB needs to be supported by [SQLAlchemy](http://docs.sqlalchemy.org/en/latest/core/engines.html#supported-databases))
-
-
-## How to Contribute
-We welcome your contribution to Namazu Swarm.
-Please feel free to send your pull requests on github!
-
-    $ git clone https://github.com/osrg/namazu-swarm.git
-    $ cd namazu-swarm
-    $ git checkout -b your-branch
-    $ your-editor foo.py
-    $ ./misc/hack.format.sh
-    $ ./misc/hack.lint.sh
-    $ git commit -a -s
-
-
-## Copyright
-Copyright (C) 2016 [Nippon Telegraph and Telephone Corporation](http://www.ntt.co.jp/index_e.html).
-
-Released under [Apache License 2.0](LICENSE.txt).
