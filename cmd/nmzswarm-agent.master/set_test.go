@@ -16,11 +16,14 @@ func generateInput(inputLen int) []string {
 	return input
 }
 
-func testChunkStrings(t *testing.T, inputLen, numChunks int) {
+func testChunkStrings(t *testing.T, inputLen, numChunks, expectedResultNumChunks int) [][]string {
 	t.Logf("inputLen=%d, numChunks=%d", inputLen, numChunks)
 	input := generateInput(inputLen)
 	result := chunkStrings(input, numChunks)
 	t.Logf("result has %d chunks", len(result))
+	if expectedResultNumChunks != len(result) {
+		t.Fatalf("expected %d, got %d", expectedResultNumChunks, len(result))
+	}
 	inputReconstructedFromResult := []string{}
 	for i, chunk := range result {
 		t.Logf("chunk %d has %d elements", i, len(chunk))
@@ -29,26 +32,36 @@ func testChunkStrings(t *testing.T, inputLen, numChunks int) {
 	if !reflect.DeepEqual(input, inputReconstructedFromResult) {
 		t.Fatal("input != inputReconstructedFromResult")
 	}
+	return result
 }
 
 func TestChunkStrings_4_4(t *testing.T) {
-	testChunkStrings(t, 4, 4)
+	testChunkStrings(t, 4, 4, 4)
 }
 
 func TestChunkStrings_4_1(t *testing.T) {
-	testChunkStrings(t, 4, 1)
+
+	testChunkStrings(t, 4, 1, 1)
 }
 
 func TestChunkStrings_1_4(t *testing.T) {
-	testChunkStrings(t, 1, 4)
+	testChunkStrings(t, 1, 4, 1)
 }
 
 func TestChunkStrings_1000_8(t *testing.T) {
-	testChunkStrings(t, 1000, 8)
+	testChunkStrings(t, 1000, 8, 8)
 }
 
 func TestChunkStrings_1000_9(t *testing.T) {
-	testChunkStrings(t, 1000, 9)
+	testChunkStrings(t, 1000, 9, 9)
+}
+
+func TestChunkStrings_4_3(t *testing.T) {
+	testChunkStrings(t, 4, 3, 3)
+}
+
+func TestChunkStrings_200_180(t *testing.T) {
+	testChunkStrings(t, 200, 180, 180)
 }
 
 func testShuffleStrings(t *testing.T, inputLen int, seed int64) {

@@ -1,19 +1,22 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 )
 
 // chunkStrings chunks the string slice
 func chunkStrings(x []string, numChunks int) [][]string {
 	var result [][]string
-	chunkSize := (len(x) + numChunks - 1) / numChunks
-	for i := 0; i < len(x); i += chunkSize {
+	if numChunks > len(x) {
+		numChunks = len(x)
+	}
+	i := 0
+	for len(result) < numChunks {
+		chunkSize := int(math.Floor(float64(len(x)-i) / float64(numChunks-len(result))))
 		ub := i + chunkSize
-		if ub > len(x) {
-			ub = len(x)
-		}
 		result = append(result, x[i:ub])
+		i += chunkSize
 	}
 	return result
 }
