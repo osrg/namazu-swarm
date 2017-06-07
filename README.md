@@ -24,7 +24,7 @@ Many code were copy-pasted from [our contribution to accelerate CI of Docker/Mob
 
 ## Talks
 
-- [OSS/ContainerCon Japan (May 31-June 2, 2017, Tokyo)](http://sched.co/AOmo)
+- [OSS/ContainerCon Japan (May 31-June 2, 2017, Tokyo)](http://sched.co/AOmo) [[slide](http://events.linuxfoundation.jp/sites/events/files/slides/Parallelizing%20CI%20Using%20Docker%20Swarm-mode.pdf)]
 
 ## Quick Start
 ### Installation
